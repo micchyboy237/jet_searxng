@@ -1,0 +1,383 @@
+# settings.yml
+# Fully optimized local instance – Mac M1 – No Docker – No Limits – Nov 2025
+
+general:
+  debug: false
+  instance_name: "Local SearXNG ∞ (M1)"
+  privacypolicy_url: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: true
+
+brand:
+  new_issue_url: https://github.com/searxng/searxng/issues/new
+  docs_url: https://docs.searxng.org/
+  public_instances: https://searx.space
+  wiki_url: https://github.com/searxng/searxng/wiki
+  issue_url: https://github.com/searxng/searxng/issues
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "auto"
+  ban_time_on_fail: 5
+  max_ban_time_on_fail: 120
+  suspended_times:
+    SearxEngineAccessDenied: 86400
+    SearxEngineCaptcha: 86400
+    SearxEngineTooManyRequests: 3600
+    cf_SearxEngineCaptcha: 1296000
+    cf_SearxEngineAccessDenied: 86400
+    recaptcha_SearxEngineCaptcha: 604800
+  formats:
+    - html
+    - json
+
+server:
+  port: 8888
+  bind_address: "0.0.0.0"
+  base_url: "http://0.0.0.0:8888/"
+  secret_key: "c1f3a9b8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0"
+  limiter: false # completely off for local unlimited use
+  public_instance: false
+  image_proxy: true # highly recommended locally
+  http_protocol_version: "1.0"
+  method: "POST"
+  default_http_headers:
+    X-Content-Type-Options: nosniff
+    X-Download-Options: noopen
+    X-Robots-Tag: noindex, nofollow
+    Referrer-Policy: no-referrer
+
+cache:
+  type: redis
+
+valkey:
+  url: redis://localhost:6379/0
+
+ui:
+  static_path: ""
+  templates_path: ""
+  query_in_title: true
+  infinite_scroll: true
+  default_theme: simple
+  center_alignment: false
+  default_locale: ""
+  theme_args:
+    simple_style: auto
+  search_on_category_select: true
+  hotkeys: default
+  url_formatting: pretty
+
+outgoing:
+  request_timeout: 4.0
+  useragent_suffix: "SearXNG-Local-M1"
+  pool_connections: 200
+  pool_maxsize: 40
+  enable_http2: true
+  proxies: {}
+  extra_proxy_timeout: 10
+
+plugins:
+  searx.plugins.calculator.SXNGPlugin:
+    active: true
+  searx.plugins.hash_plugin.SXNGPlugin:
+    active: true
+  searx.plugins.self_info.SXNGPlugin:
+    active: true
+  searx.plugins.unit_converter.SXNGPlugin:
+    active: true
+  searx.plugins.ahmia_filter.SXNGPlugin:
+    active: true
+  searx.plugins.hostnames.SXNGPlugin:
+    active: true
+  searx.plugins.time_zone.SXNGPlugin:
+    active: true
+  searx.plugins.oa_doi_rewrite.SXNGPlugin:
+    active: false
+  searx.plugins.tor_check.SXNGPlugin:
+    active: false
+  searx.plugins.tracker_url_remover.SXNGPlugin:
+    active: true
+
+checker:
+  off_when_debug: true
+
+categories_as_tabs:
+  general:
+  images:
+  videos:
+  news:
+  science:
+  files:
+  music:
+  it:
+  social media:
+
+# ——————————————————————— ENGINES ———————————————————————
+# Only the best, truly unlimited or very high-limit engines enabled
+# Ordered by reliability & speed in 2025
+
+engines:
+  # ────── CORE GENERAL/WEB ENGINES (high quality, low errors) ──────
+  - name: brave
+    engine: brave
+    shortcut: br
+    disabled: false
+    timeout: 3.0
+    weight: 15
+    time_range_support: true
+    paging: true
+    categories: [general, web]
+
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    disabled: true
+    timeout: 4.0
+    weight: 3
+    startpage_categ: web
+    categories: [general, web]
+
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+    weight: 1 # lower priority
+    timeout: 2.0
+    max_connections: 5
+    suspended_times:
+      SearxEngineCaptcha: 300 # 5 minutes instead of 24h
+      SearxEngineTooManyRequests: 300
+    categories: [general, web]
+
+  - name: qwant
+    engine: qwant
+    shortcut: qw
+    disabled: true
+    timeout: 3.5
+    weight: 2
+    qwant_categ: web
+    categories: [general, web]
+
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: true
+    timeout: 5.0 # Higher for occasional blocks
+    weight: 1 # Low to avoid spam influence
+    categories: [general, web]
+
+  - name: google
+    engine: google
+    shortcut: go
+    disabled: false
+    timeout: 6.0 # Generous for CAPTCHAs/retries
+    weight: 1 # Low weight: quality boost without dominance
+    categories: [general, web]
+
+  # ────── IMAGES (clean, no spam) ──────
+  - name: brave.images
+    engine: brave
+    network: brave
+    shortcut: bri
+    disabled: false
+    timeout: 4.0
+    weight: 15
+    brave_category: images
+    categories: [images, web]
+
+  - name: startpage images
+    engine: startpage
+    shortcut: spi
+    disabled: true
+    timeout: 5.0
+    weight: 2
+    startpage_categ: images
+    categories: [images, web]
+
+  - name: qwant images
+    engine: qwant
+    shortcut: qwi
+    disabled: false
+    timeout: 4.0
+    weight: 2
+    qwant_categ: images
+    categories: [images, web]
+
+  - name: google images
+    engine: google_images
+    shortcut: goi
+    disabled: false
+    timeout: 6.0
+    weight: 1
+    categories: [images]
+
+  # ────── NEWS (timely, low bias) ──────
+  - name: brave.news
+    engine: brave
+    network: brave
+    shortcut: brn
+    disabled: false
+    timeout: 3.5
+    weight: 15
+    brave_category: news
+    categories: [news]
+
+  - name: startpage news
+    engine: startpage
+    shortcut: spn
+    disabled: true
+    timeout: 4.5
+    weight: 2
+    startpage_categ: news
+    categories: [news]
+
+  - name: qwant news
+    engine: qwant
+    shortcut: qwn
+    disabled: false
+    timeout: 3.0
+    weight: 2
+    qwant_categ: news
+    categories: [news]
+
+  - name: bing news
+    engine: bing_news
+    shortcut: bin
+    disabled: true
+    timeout: 5.0
+    weight: 1
+    categories: [news]
+
+  - name: google news
+    engine: google_news
+    shortcut: gon
+    disabled: false
+    timeout: 6.0
+    weight: 1
+    categories: [news]
+
+  # ────── VIDEOS (reliable sources) ──────
+  - name: brave.videos
+    engine: brave
+    network: brave
+    shortcut: brv
+    disabled: false
+    timeout: 4.0
+    weight: 10
+    brave_category: videos
+    categories: [videos, web]
+
+  - name: youtube
+    engine: youtube_noapi
+    shortcut: yt
+    disabled: false
+    timeout: 5.0 # Stable scraper, low errors
+    weight: 2
+    categories: [videos]
+
+  - name: google videos
+    engine: google_videos
+    shortcut: gov
+    disabled: false
+    timeout: 6.0
+    weight: 1
+    categories: [videos]
+
+  # ────── UTILITY ENGINES (infoboxes, maps, etc. – always reliable) ──────
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+    timeout: 6.0
+    weight: 2
+    display_type: ["infobox"]
+    categories: [general]
+
+  - name: wikidata
+    engine: wikidata
+    shortcut: wd
+    disabled: false
+    timeout: 2.5
+    weight: 2
+    display_type: ["infobox"]
+    categories: [general]
+
+  - name: openstreetmap
+    engine: openstreetmap
+    shortcut: osm
+    disabled: false
+    timeout: 3.0
+    weight: 1
+    categories: [map]
+
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+    timeout: 3.5
+    weight: 1
+    categories: [it]
+
+  - name: currency
+    engine: currency_convert
+    shortcut: cc
+    disabled: false
+    timeout: 1.5
+    weight: 1
+    categories: [general]
+
+  # ────── SCIENCE/ACademic (high-quality, low spam) ──────
+  - name: semantic scholar
+    engine: semantic_scholar
+    shortcut: se
+    disabled: false
+    timeout: 4.0
+    weight: 2
+    categories: [science]
+
+  - name: pubmed
+    engine: pubmed
+    shortcut: pub
+    disabled: false
+    timeout: 3.5
+    weight: 2
+    categories: [science]
+
+  - name: reddit
+    engine: reddit
+    shortcut: re
+    disabled: false
+    categories: [social media, general]
+
+  # ────── Adult engines ──────
+
+  - name: missav
+    engine: missav
+    shortcut: ma
+    disabled: false
+    timeout: 5.0
+    weight: 5                 # adjust to taste — higher = more results from missav
+    categories: [videos, porn] # create 'porn' tab if you want dedicated category
+    paging: true
+    safesearch: false
+
+  - name: nsfwph
+    engine: nsfwph
+    shortcut: np
+    disabled: false
+    timeout: 6.0
+    weight: 2               # low — forum threads only, not direct videos
+    categories: [general, social media]
+    paging: true
+    safesearch: false
+
+# DOI resolvers (for scientific papers)
+doi_resolvers:
+  oadoi.org: "https://oadoi.org/"
+  doi.org: "https://doi.org/"
+  sci-hub.se: "https://sci-hub.se/"
+  sci-hub.st: "https://sci-hub.st/"
+  sci-hub.ru: "https://sci-hub.ru/"
+default_doi_resolver: "sci-hub.se" # personal local preference
