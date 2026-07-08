@@ -354,25 +354,25 @@ engines:
 
   # ────── Adult engines ──────
 
-  - name: missav
-    engine: missav
-    shortcut: ma
-    disabled: false
-    timeout: 5.0
-    weight: 5                 # adjust to taste — higher = more results from missav
-    categories: [videos, porn] # create 'porn' tab if you want dedicated category
-    paging: true
-    safesearch: false
+  # - name: missav
+  #   engine: missav
+  #   shortcut: ma
+  #   disabled: false
+  #   timeout: 5.0
+  #   weight: 5                 # adjust to taste — higher = more results from missav
+  #   categories: [videos, porn] # create 'porn' tab if you want dedicated category
+  #   paging: true
+  #   safesearch: false
 
-  - name: nsfwph
-    engine: nsfwph
-    shortcut: np
-    disabled: false
-    timeout: 6.0
-    weight: 2               # low — forum threads only, not direct videos
-    categories: [general, social media]
-    paging: true
-    safesearch: false
+  # - name: nsfwph
+  #   engine: nsfwph
+  #   shortcut: np
+  #   disabled: false
+  #   timeout: 6.0
+  #   weight: 2               # low — forum threads only, not direct videos
+  #   categories: [general, social media]
+  #   paging: true
+  #   safesearch: false
 
 # DOI resolvers (for scientific papers)
 doi_resolvers:
