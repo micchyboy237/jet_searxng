@@ -1,5 +1,7 @@
 # settings.yml
-# Fully optimized local instance – Mac M1 – No Docker – No Limits – Nov 2025
+# Optimized for local LLM agent / RAG – Mac M1 – No Docker – Unlimited – July 2026
+
+use_default_settings: true # Recommended: loads all defaults + your overrides
 
 general:
   debug: false
@@ -18,21 +20,17 @@ brand:
 
 search:
   safe_search: 0
-  autocomplete: ""
+  autocomplete: "" # or "duckduckgo" / "brave" if preferred
   default_lang: "auto"
   ban_time_on_fail: 5
   max_ban_time_on_fail: 120
-  # suspended_times:
-  #   SearxEngineAccessDenied: 86400
-  #   SearxEngineCaptcha: 86400
-  #   SearxEngineTooManyRequests: 3600
-  #   cf_SearxEngineCaptcha: 1296000
-  #   cf_SearxEngineAccessDenied: 86400
-  #   recaptcha_SearxEngineCaptcha: 604800
-  suspended_times: {}
+  suspended_times:
+    SearxEngineAccessDenied: 300 # 5 minutes instead of 24h
+    SearxEngineCaptcha: 300
+    SearxEngineTooManyRequests: 300
   formats:
     - html
-    - json
+    - json # Essential for LLM agents
 
 server:
   port: 8888
@@ -49,6 +47,7 @@ server:
     X-Download-Options: noopen
     X-Robots-Tag: noindex, nofollow
     Referrer-Policy: no-referrer
+  proxied: true
 
 cache:
   type: redis
@@ -72,8 +71,9 @@ ui:
 
 outgoing:
   request_timeout: 4.0
-  useragent_suffix: "SearXNG-Local-M1"
-  pool_connections: 200
+  max_request_timeout: 12.0 # Added: helps stubborn engines
+  useragent_suffix: "SearXNG-Local-M1-Agent"
+  pool_connections: 150 # Slightly reduced from 200 for stability
   pool_maxsize: 40
   enable_http2: true
   proxies: {}
@@ -120,7 +120,7 @@ categories_as_tabs:
 # Ordered by reliability & speed in 2025
 
 engines:
-  # ────── CORE GENERAL/WEB ENGINES (high quality, low errors) ──────
+  # ────── CORE GENERAL WEB (fast fallback chain) ──────
   - name: brave
     engine: brave
     shortcut: br
@@ -130,227 +130,171 @@ engines:
     time_range_support: true
     paging: true
     categories: [general, web]
-
-  - name: startpage
-    engine: startpage
-    shortcut: sp
-    disabled: true
-    timeout: 4.0
-    weight: 3
-    startpage_categ: web
+  - name: mojeek
+    engine: mojeek
+    shortcut: mjk
+    disabled: false
+    timeout: 3.5
+    weight: 10
     categories: [general, web]
-
   - name: duckduckgo
     engine: duckduckgo
     shortcut: ddg
     disabled: false
-    weight: 1 # lower priority
-    timeout: 2.0
-    max_connections: 5
-    suspended_times:
-      SearxEngineCaptcha: 300 # 5 minutes instead of 24h
-      SearxEngineTooManyRequests: 300
+    timeout: 2.5
+    weight: 8
     categories: [general, web]
-
-  - name: qwant
-    engine: qwant
-    shortcut: qw
-    disabled: true
-    timeout: 3.5
-    weight: 2
-    qwant_categ: web
-    categories: [general, web]
-
-  - name: bing
-    engine: bing
-    shortcut: bi
-    disabled: true
-    timeout: 5.0 # Higher for occasional blocks
-    weight: 1 # Low to avoid spam influence
-    categories: [general, web]
-
   - name: google
     engine: google
     shortcut: go
     disabled: false
-    timeout: 6.0 # Generous for CAPTCHAs/retries
-    weight: 1 # Low weight: quality boost without dominance
+    timeout: 6.0
+    weight: 6
+    categories: [general, web]
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: false
+    timeout: 5.0
+    weight: 3
     categories: [general, web]
 
-  # ────── IMAGES (clean, no spam) ──────
-  - name: brave.images
-    engine: brave
-    network: brave
-    shortcut: bri
-    disabled: false
-    timeout: 4.0
-    weight: 15
-    brave_category: images
-    categories: [images, web]
-
-  - name: startpage images
-    engine: startpage
-    shortcut: spi
-    disabled: true
-    timeout: 5.0
-    weight: 2
-    startpage_categ: images
-    categories: [images, web]
-
-  - name: qwant images
-    engine: qwant
-    shortcut: qwi
-    disabled: false
-    timeout: 4.0
-    weight: 2
-    qwant_categ: images
-    categories: [images, web]
-
-  - name: google images
-    engine: google_images
-    shortcut: goi
-    disabled: false
-    timeout: 6.0
-    weight: 1
-    categories: [images]
-
-  # ────── NEWS (timely, low bias) ──────
-  - name: brave.news
-    engine: brave
-    network: brave
-    shortcut: brn
-    disabled: false
-    timeout: 3.5
-    weight: 15
-    brave_category: news
-    categories: [news]
-
-  - name: startpage news
-    engine: startpage
-    shortcut: spn
-    disabled: true
-    timeout: 4.5
-    weight: 2
-    startpage_categ: news
-    categories: [news]
-
-  - name: qwant news
-    engine: qwant
-    shortcut: qwn
-    disabled: false
-    timeout: 3.0
-    weight: 2
-    qwant_categ: news
-    categories: [news]
-
-  - name: bing news
-    engine: bing_news
-    shortcut: bin
-    disabled: true
-    timeout: 5.0
-    weight: 1
-    categories: [news]
-
-  - name: google news
-    engine: google_news
-    shortcut: gon
-    disabled: false
-    timeout: 6.0
-    weight: 1
-    categories: [news]
-
-  # ────── VIDEOS (reliable sources) ──────
-  - name: brave.videos
-    engine: brave
-    network: brave
-    shortcut: brv
-    disabled: false
-    timeout: 4.0
-    weight: 10
-    brave_category: videos
-    categories: [videos, web]
-
-  - name: youtube
-    engine: youtube_noapi
-    shortcut: yt
-    disabled: false
-    timeout: 5.0 # Stable scraper, low errors
-    weight: 2
-    categories: [videos]
-
-  - name: google videos
-    engine: google_videos
-    shortcut: gov
-    disabled: false
-    timeout: 6.0
-    weight: 1
-    categories: [videos]
-
-  # ────── UTILITY ENGINES (infoboxes, maps, etc. – always reliable) ──────
-  - name: wikipedia
-    engine: wikipedia
-    shortcut: wp
-    disabled: false
-    timeout: 6.0
-    weight: 2
-    display_type: ["infobox"]
-    categories: [general]
-
-  # - name: wikidata
-  #   engine: wikidata
-  #   shortcut: wd
-  #   disabled: false
-  #   timeout: 2.5
-  #   weight: 2
-  #   display_type: ["infobox"]
-  #   categories: [general]
-
-  - name: openstreetmap
-    engine: openstreetmap
-    shortcut: osm
-    disabled: false
-    timeout: 3.0
-    weight: 1
-    categories: [map]
-
+  # ────── CODE / DEV DOCS (main value for agent tool-use) ──────
   - name: github
     engine: github
     shortcut: gh
     disabled: false
     timeout: 3.5
-    weight: 1
+    weight: 12
     categories: [it]
-
-  - name: currency
-    engine: currency_convert
-    shortcut: cc
-    disabled: false
-    timeout: 1.5
-    weight: 1
-    categories: [general]
-
-  # ────── SCIENCE/ACademic (high-quality, low spam) ──────
-  - name: semantic scholar
-    engine: semantic_scholar
-    shortcut: se
+  - name: github code
+    engine: github_code
+    shortcut: ghc
     disabled: false
     timeout: 4.0
-    weight: 2
-    categories: [science]
+    weight: 12
+    categories: [it]
+  - name: stackexchange
+    engine: stackexchange
+    shortcut: sx
+    disabled: false
+    timeout: 4.0
+    weight: 14
+    categories: [it]
+  - name: npm
+    engine: npm
+    shortcut: npm
+    disabled: false
+    timeout: 3.0
+    weight: 6
+    categories: [it]
+  - name: pypi
+    engine: pypi
+    shortcut: pypi
+    disabled: false
+    timeout: 3.0
+    weight: 6
+    categories: [it]
+  - name: crates.io
+    engine: crates
+    shortcut: crt
+    disabled: false
+    timeout: 3.0
+    weight: 4
+    categories: [it]
+  - name: microsoft learn
+    engine: microsoft_learn
+    shortcut: msl
+    disabled: false
+    timeout: 4.0
+    weight: 6
+    categories: [it]
+  - name: hackernews
+    engine: hackernews
+    shortcut: hn
+    disabled: false
+    timeout: 3.0
+    weight: 8
+    categories: [it, general]
+  - name: discuss.python
+    engine: discourse
+    shortcut: dpy
+    disabled: false
+    timeout: 4.0
+    weight: 4
+    categories: [it]
 
+  # ────── RESEARCH / SCIENCE (RAG grounding) ──────
+  - name: arxiv
+    engine: arxiv
+    shortcut: arx
+    disabled: false
+    timeout: 4.0
+    weight: 8
+    categories: [science]
+  - name: semantic scholar
+    engine: semantic_scholar
+    shortcut: ss
+    disabled: false
+    timeout: 4.0
+    weight: 10
+    categories: [science]
   - name: pubmed
     engine: pubmed
     shortcut: pub
     disabled: false
     timeout: 3.5
-    weight: 2
+    weight: 6
     categories: [science]
 
-  - name: reddit
-    engine: reddit
-    shortcut: re
+  # ────── FAST FACTS / COMPUTE ──────
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
     disabled: false
+    timeout: 4.0
+    weight: 10
+    categories: [general]
+  - name: wolframalpha
+    engine: wolframalpha_noapi
+    shortcut: wa
+    disabled: false
+    timeout: 4.0
+    weight: 6
+    categories: [general]
+  - name: currency
+    engine: currency_convert
+    shortcut: cc
+    disabled: false
+    timeout: 1.5
+    weight: 2
+    categories: [general]
+  - name: openstreetmap
+    engine: openstreetmap
+    shortcut: osm
+    disabled: false
+    timeout: 3.0
+    weight: 2
+    categories: [map]
+
+  # ────── SOCIAL (low weight — real-world context only) ──────
+  - name: lemmy
+    engine: lemmy
+    shortcut: lm
+    disabled: false
+    timeout: 4.0
+    weight: 4
     categories: [social media, general]
+
+  # ────── EXPLICITLY DISABLED DEFAULTS ──────
+  - name: startpage
+    disabled: true
+  - name: qwant
+    disabled: true
+  - name: google images
+    disabled: true
+  - name: youtube
+    disabled: true
 
   # ────── Adult engines ──────
 

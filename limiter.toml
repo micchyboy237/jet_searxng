@@ -1,21 +1,28 @@
-# limiter.toml — Optimized for local unlimited Mac M1 instance
+# limiter.toml — Minimal & relaxed for local Mac M1 (unlimited access)
 [botdetection]
 
 ipv4_prefix = 32
 ipv6_prefix = 48
 
+# Trusted proxies for LAN + localhost
 trusted_proxies = [
-  '127.0.0.0/8',
-  '::1',
-  # Add your LAN if you access from other devices:
-  # '192.168.68.0/24',   # Example — adjust to your network
+  "127.0.0.0/8",
+  "::1",
+  "192.168.0.0/16",   # Adjust if your LAN subnet is different
+  "10.0.0.0/8",
+  "172.16.0.0/12",
 ]
 
 [botdetection.ip_limit]
-filter_link_local = false   # Important for unlimited local use
-link_token = false
+# Unlimited local access
+filter_link_local = false
+link_token = false   # Keep disabled locally
 
 [botdetection.ip_lists]
 block_ip = []
-pass_ip = []
-pass_searxng_org = true
+
+pass_ip = [
+  "127.0.0.0/8",
+  "::1",
+  "192.168.0.0/16",   # Add your actual LAN if needed
+]
