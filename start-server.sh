@@ -6,10 +6,9 @@
 set -euo pipefail
 
 INSTANCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(dirname "$INSTANCE_DIR")"
+REPO_ROOT="/Users/jethroestrada/Desktop/External_Projects/AI/apps/searxng"
 SETTINGS_PATH="$INSTANCE_DIR/settings.yml"
-# VENV_DIR="$REPO_ROOT/.venv"
-VENV_DIR="/Users/jethroestrada/Desktop/External_Projects/searxng/.venv"
+VENV_DIR="$REPO_ROOT/.venv"
 
 MODE="${1:-dev}"
 HOST="0.0.0.0"

@@ -296,14 +296,14 @@ engines:
     display_type: ["infobox"]
     categories: [general]
 
-  - name: wikidata
-    engine: wikidata
-    shortcut: wd
-    disabled: false
-    timeout: 2.5
-    weight: 2
-    display_type: ["infobox"]
-    categories: [general]
+  # - name: wikidata
+  #   engine: wikidata
+  #   shortcut: wd
+  #   disabled: false
+  #   timeout: 2.5
+  #   weight: 2
+  #   display_type: ["infobox"]
+  #   categories: [general]
 
   - name: openstreetmap
     engine: openstreetmap
