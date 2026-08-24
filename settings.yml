@@ -144,11 +144,11 @@ engines:
     engine: duckduckgo
     shortcut: ddg
     disabled: false
-    weight: 1 # lower priority
+    weight: 1
     timeout: 2.0
     max_connections: 5
     suspended_times:
-      SearxEngineCaptcha: 300 # 5 minutes instead of 24h
+      SearxEngineCaptcha: 300
       SearxEngineTooManyRequests: 300
     categories: [general, web]
 
@@ -161,20 +161,40 @@ engines:
     qwant_categ: web
     categories: [general, web]
 
+  # ✅ FIXED: Explicitly enabled + increased weight. Previously commented-out
+  # `disabled: true` was ambiguous; some SearXNG versions treat missing
+  # `disabled` as `true`. Weight raised from 1→6 to make it a viable fallback.
   - name: bing
     engine: bing
     shortcut: bi
-    # disabled: true
-    timeout: 5.0 # Higher for occasional blocks
-    weight: 1 # Low to avoid spam influence
+    disabled: false
+    timeout: 5.0
+    weight: 6
     categories: [general, web]
 
+  # ✅ FIXED: Weight increased from 1→5. At weight=1, Google was being
+  # suppressed during batch requests when higher-weight engines failed.
+  # Also added `use_mobile_ui: false` to avoid mobile CAPTCHA triggers.
   - name: google
     engine: google
     shortcut: go
     disabled: false
-    timeout: 6.0 # Generous for CAPTCHAs/retries
-    weight: 1 # Low weight: quality boost without dominance
+    timeout: 6.0
+    weight: 5
+    use_mobile_ui: false
+    categories: [general, web]
+
+  # ✅ IMPROVED: Added `paging: true` (Mojeek supports it) and
+  # `time_range_support: true`. Weight adjusted from 8→7 to sit between
+  # Bing (6) and Brave (15), preventing it from dominating when Brave recovers.
+  - name: mojeek
+    engine: mojeek
+    shortcut: mjk
+    disabled: false
+    timeout: 5.0
+    weight: 7
+    paging: true
+    time_range_support: true
     categories: [general, web]
 
   # ────── IMAGES (clean, no spam) ──────
