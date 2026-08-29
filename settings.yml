@@ -29,7 +29,10 @@ search:
   #   cf_SearxEngineCaptcha: 1296000
   #   cf_SearxEngineAccessDenied: 86400
   #   recaptcha_SearxEngineCaptcha: 604800
-  suspended_times: {}
+  suspended_times:
+    SearxEngineTooManyRequests: 300 # 5 min instead of permanent
+    SearxEngineCaptcha: 600 # 10 min
+    SearxEngineAccessDenied: 1800 # 30 min
   formats:
     - html
     - json
@@ -126,25 +129,50 @@ engines:
     shortcut: br
     disabled: false
     timeout: 3.0
-    weight: 15
-    time_range_support: true
+    weight: 15 # Primary - unchanged
+    categories: [general, web]
+
+  - name: mojeek
+    engine: mojeek
+    shortcut: mjk
+    disabled: false
+    timeout: 5.0
+    weight: 9 # ⬆️ Was 7. Best independent fallback
     paging: true
+    time_range_support: true
+    categories: [general, web]
+
+  - name: google
+    engine: google
+    shortcut: go
+    disabled: false
+    timeout: 6.0
+    weight: 8 # ⬆️ Was 5. Semantic superiority over Bing
+    use_mobile_ui: false
     categories: [general, web]
 
   - name: startpage
     engine: startpage
     shortcut: sp
-    disabled: true
+    disabled: false # 🔄 Was disabled. Google proxy redundancy
     timeout: 4.0
-    weight: 3
+    weight: 6 # 🔄 New weight. Between Google and Bing
     startpage_categ: web
+    categories: [general, web]
+
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: false
+    timeout: 5.0
+    weight: 4 # ⬇️ Was 6. Demoted due to ambiguity failures
     categories: [general, web]
 
   - name: duckduckgo
     engine: duckduckgo
     shortcut: ddg
     disabled: false
-    weight: 1
+    weight: 3 # ⬆️ Was 1. Tertiary fallback
     timeout: 2.0
     max_connections: 5
     suspended_times:
@@ -155,46 +183,10 @@ engines:
   - name: qwant
     engine: qwant
     shortcut: qw
-    disabled: true
+    disabled: false # 🔄 Was disabled. Diversity engine
     timeout: 3.5
-    weight: 2
+    weight: 3 # 🔄 New weight. Lowest tier fallback
     qwant_categ: web
-    categories: [general, web]
-
-  # ✅ FIXED: Explicitly enabled + increased weight. Previously commented-out
-  # `disabled: true` was ambiguous; some SearXNG versions treat missing
-  # `disabled` as `true`. Weight raised from 1→6 to make it a viable fallback.
-  - name: bing
-    engine: bing
-    shortcut: bi
-    disabled: false
-    timeout: 5.0
-    weight: 6
-    categories: [general, web]
-
-  # ✅ FIXED: Weight increased from 1→5. At weight=1, Google was being
-  # suppressed during batch requests when higher-weight engines failed.
-  # Also added `use_mobile_ui: false` to avoid mobile CAPTCHA triggers.
-  - name: google
-    engine: google
-    shortcut: go
-    disabled: false
-    timeout: 6.0
-    weight: 5
-    use_mobile_ui: false
-    categories: [general, web]
-
-  # ✅ IMPROVED: Added `paging: true` (Mojeek supports it) and
-  # `time_range_support: true`. Weight adjusted from 8→7 to sit between
-  # Bing (6) and Brave (15), preventing it from dominating when Brave recovers.
-  - name: mojeek
-    engine: mojeek
-    shortcut: mjk
-    disabled: false
-    timeout: 5.0
-    weight: 7
-    paging: true
-    time_range_support: true
     categories: [general, web]
 
   # ────── IMAGES (clean, no spam) ──────
